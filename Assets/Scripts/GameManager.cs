@@ -16,10 +16,13 @@ namespace TeasingGame
         [SerializeField]
         private TextMeshProUGUI timerDisplay;
 
+        [SerializeField]
+        private Board board;
+
         // Start is called before the first frame update
         void Start()
         {
-
+            board.CreateBoard();
         }
 
         // Update is called once per frame
