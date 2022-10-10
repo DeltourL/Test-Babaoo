@@ -36,6 +36,12 @@ public class Board : MonoBehaviour
                     mainTextureOffset = new Vector2(1.0f / boardSize * x, 1.0f / boardSize * y),
                     mainTextureScale = new Vector2(1.0f / boardSize, 1.0f / boardSize)
                 };
+
+                // removing the middle piece
+                if (x == Mathf.RoundToInt(boardSize / 2) && y == Mathf.RoundToInt(boardSize / 2))
+                {
+                    tile.SetActive(false);
+                }
             }
         }
     }
