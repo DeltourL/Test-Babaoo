@@ -40,8 +40,12 @@ public class Board : MonoBehaviour
                 // tile creation
                 Tile tile = GameObject.CreatePrimitive(PrimitiveType.Quad).AddComponent<Tile>();
                 tile.transform.position = position;
+                tile.lastCorrectPostion = position;
+
                 tile.transform.parent = transform;
                 tile.coordinates = new Vector2Int(x, y);
+
+                tile.OnTileMoved += MoveTile;
 
                 // setting up the image on the tile
                 tile.GetComponent<Renderer>().material = new Material(shader)
@@ -51,11 +55,16 @@ public class Board : MonoBehaviour
                     mainTextureScale = new Vector2(1.0f / boardSize, 1.0f / boardSize)
                 };
 
-                // removing the middle piece
+                // removing the middle piece and saving it
                 if (x == Mathf.RoundToInt(boardSize / 2) && y == Mathf.RoundToInt(boardSize / 2))
                 {
-                    tile.gameObject.SetActive(false);
                     emptySpace = tile;
+
+                    // turn tile invisible
+                    tile.GetComponent<MeshRenderer>().enabled = false;
+
+                    // changing layer to check for legal moves when moving tiles
+                    tile.gameObject.layer = LayerMask.NameToLayer("Empty Space");
                 }
 
                 tiles[x, y] = tile;
@@ -103,15 +112,24 @@ public class Board : MonoBehaviour
     // switch places between tile and empty space 
     void MoveTile(Tile tile)
     {
-        Vector2Int targetCoord = emptySpace.coordinates;
-        emptySpace.coordinates = tile.coordinates;
-        tile.coordinates = targetCoord;
+        //check if move is legal
+        if ((tile.coordinates - emptySpace.coordinates).sqrMagnitude == 1)
+        {
+            Vector2Int targetCoord = emptySpace.coordinates;
+            emptySpace.coordinates = tile.coordinates;
+            tile.coordinates = targetCoord;
 
-        tiles[emptySpace.coordinates.x, emptySpace.coordinates.y] = emptySpace;
-        tiles[targetCoord.x, targetCoord.y] = tile;
+            tiles[emptySpace.coordinates.x, emptySpace.coordinates.y] = emptySpace;
+            tiles[targetCoord.x, targetCoord.y] = tile;
 
-        Vector3 targetPosition = emptySpace.transform.position;
-        emptySpace.transform.position = tile.transform.position;
-        tile.transform.position = targetPosition;
+            Vector3 targetPosition = emptySpace.transform.position;
+            emptySpace.transform.position = tile.lastCorrectPostion;
+            tile.transform.position = targetPosition;
+            tile.lastCorrectPostion = targetPosition;
+        }
+        else
+        {
+            tile.ResetPosition();
+        }
     }
 }
