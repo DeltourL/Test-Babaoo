@@ -4,6 +4,7 @@ using UnityEngine;
 
 using SceneTransitionSystem;
 using TMPro;
+using System;
 
 namespace TeasingGame
 {
@@ -14,6 +15,9 @@ namespace TeasingGame
 
         private float timer;
         private readonly float startingTime = 180f; // time allowed to complete the puzzle, in seconds
+        private bool isGameActive;
+        int resolutionX = Screen.width; // saving screen width to check for changes during the game
+        int resolutionY = Screen.height; // saving screen height to check for changes during the game
 
         [SerializeField]
         private TextMeshProUGUI timerDisplay;
@@ -27,14 +31,18 @@ namespace TeasingGame
         {
             // create and shuffle the board
             board.CreateBoard();
+
             // listen to winning condition
             board.OnGameWon += Board_OnGameWon;
 
             // start the timer
             timer = startingTime;
 
+            isGameActive = true;
             // set the camera so that the board is fully visible
             SetCamera();
+            // reset the camera if resolution changes
+            StartCoroutine(CheckForScreenSizeChange());
         }
 
         // Update is called once per frame
@@ -55,12 +63,12 @@ namespace TeasingGame
                 // end game
                 GameLost();
             }
-
         }
-
         // game won
         private void Board_OnGameWon(Board obj)
         {
+            isGameActive = false;
+
             float timeElapsed = startingTime - timer;
             float bestTime = PlayerPrefs.GetFloat("Best time");
             if (bestTime > timeElapsed || bestTime == 0)
@@ -74,6 +82,7 @@ namespace TeasingGame
         // game lost
         private void GameLost()
         {
+            isGameActive = false;
             GoToHomeScene();
         }
 
@@ -94,6 +103,24 @@ namespace TeasingGame
                 // fit camera to screen width
                 camera.orthographicSize = board.boardSize * .6f / camera.aspect;
             }
+        }
+
+        private IEnumerator CheckForScreenSizeChange()
+        {
+            while (isGameActive)
+            {
+                // if screen size changes
+                if (resolutionX != Screen.width || resolutionY != Screen.height)
+                {
+                    // reset camera
+                    SetCamera();
+                    // save new screen size
+                    resolutionX = Screen.width;
+                    resolutionY = Screen.height;
+                }
+                yield return null;
+            }
+            yield return null;
         }
     }
 }
