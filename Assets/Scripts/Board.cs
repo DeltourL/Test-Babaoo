@@ -38,22 +38,13 @@ public class Board : MonoBehaviour
 
                 // tile creation
                 Tile tile = GameObject.CreatePrimitive(PrimitiveType.Quad).AddComponent<Tile>();
-                tile.transform.position = position;
-                tile.lastCorrectPosition = position;
+                tile.Initialize(position, new Vector2Int(x, y), shader, puzzleImage, boardSize);
 
+                // make the board a parent for clarity in the hierarchy
                 tile.transform.parent = transform;
-                tile.coordinates = new Vector2Int(x, y);
-                tile.correctCoordinates = tile.coordinates;
 
+                // listen to tile movement
                 tile.OnTileMoved += MoveTile;
-
-                // setting up the image on the tile
-                tile.GetComponent<Renderer>().material = new Material(shader)
-                {
-                    mainTexture = puzzleImage,
-                    mainTextureOffset = new Vector2(1.0f / boardSize * x, 1.0f / boardSize * y),
-                    mainTextureScale = new Vector2(1.0f / boardSize, 1.0f / boardSize)
-                };
 
                 // removing the middle piece and saving it
                 if (x == Mathf.RoundToInt(boardSize / 2) && y == Mathf.RoundToInt(boardSize / 2))
@@ -67,6 +58,7 @@ public class Board : MonoBehaviour
                     tile.gameObject.layer = LayerMask.NameToLayer("Empty Space");
                 }
 
+                // adding this tile to the board array
                 tiles[x, y] = tile;
             }
         }
