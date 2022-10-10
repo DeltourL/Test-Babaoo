@@ -6,7 +6,7 @@ using UnityEngine;
 public class Board : MonoBehaviour
 {
 
-    private readonly int boardSize = 3;
+    public readonly int boardSize = 3;
 
     public event Action<Board> OnGameWon;
 

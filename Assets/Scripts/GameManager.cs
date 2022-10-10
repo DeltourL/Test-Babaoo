@@ -19,6 +19,8 @@ namespace TeasingGame
         private TextMeshProUGUI timerDisplay;
         [SerializeField]
         private Board board;
+        [SerializeField]
+        Camera camera;
 
         // Start is called before the first frame update
         void Start()
@@ -26,6 +28,7 @@ namespace TeasingGame
             board.CreateBoard();
             board.OnGameWon += Board_OnGameWon;
             timer = startingTime;
+            SetCamera();
         }
 
         private void Board_OnGameWon(Board obj)
@@ -65,6 +68,19 @@ namespace TeasingGame
         public void GoToHomeScene()
         {
             STSSceneManager.LoadScene(SceneForButton.ToString());
+        }
+
+        // set the camera so that the board is fully visible
+        void SetCamera()
+        {
+            if (Screen.width > Screen.height)
+            {
+                camera.orthographicSize = board.boardSize * .6f;
+            }
+            else
+            {
+                camera.orthographicSize = board.boardSize * .6f / Camera.main.aspect;
+            }
         }
     }
 }

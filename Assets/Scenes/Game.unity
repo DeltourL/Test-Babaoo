@@ -472,6 +472,7 @@ MonoBehaviour:
   SceneForButton: 0
   timerDisplay: {fileID: 1319708450}
   board: {fileID: 1540376364}
+  camera: {fileID: 902517398}
 --- !u!4 &1082914455
 Transform:
   m_ObjectHideFlags: 0
