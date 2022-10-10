@@ -8,12 +8,12 @@ public class Tile : MonoBehaviour
     public Vector2Int coordinates;
     public Vector2Int correctCoordinates;
 
-    public Vector3 lastCorrectPostion;
+    public Vector3 lastCorrectPosition;
     public event Action<Tile> OnTileMoved;
 
     private void Start()
     {
-        lastCorrectPostion = transform.position;
+        lastCorrectPosition = transform.position;
     }
 
     private void OnMouseDrag()
@@ -42,7 +42,7 @@ public class Tile : MonoBehaviour
 
     public void ResetPosition()
     {
-        transform.position = lastCorrectPostion;
+        transform.position = lastCorrectPosition;
     }
 
 }

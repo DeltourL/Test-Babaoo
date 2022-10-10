@@ -39,7 +39,7 @@ public class Board : MonoBehaviour
                 // tile creation
                 Tile tile = GameObject.CreatePrimitive(PrimitiveType.Quad).AddComponent<Tile>();
                 tile.transform.position = position;
-                tile.lastCorrectPostion = position;
+                tile.lastCorrectPosition = position;
 
                 tile.transform.parent = transform;
                 tile.coordinates = new Vector2Int(x, y);
@@ -125,9 +125,9 @@ public class Board : MonoBehaviour
             tiles[targetCoord.x, targetCoord.y] = tile;
 
             Vector3 targetPosition = emptySpace.transform.position;
-            emptySpace.transform.position = tile.lastCorrectPostion;
+            emptySpace.transform.position = tile.lastCorrectPosition;
             tile.transform.position = targetPosition;
-            tile.lastCorrectPostion = targetPosition;
+            tile.lastCorrectPosition = targetPosition;
         }
         else
         {
