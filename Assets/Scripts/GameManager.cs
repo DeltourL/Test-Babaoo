@@ -12,10 +12,11 @@ namespace TeasingGame
     {
         public TeasingGameScene SceneForButton;
 
-        private float timer = 180f;
+        private float timer;
+        [SerializeField]
+        private readonly float startingTime = 180f;
         [SerializeField]
         private TextMeshProUGUI timerDisplay;
-
         [SerializeField]
         private Board board;
 
@@ -24,10 +25,17 @@ namespace TeasingGame
         {
             board.CreateBoard();
             board.OnGameWon += Board_OnGameWon;
+            timer = startingTime;
         }
 
         private void Board_OnGameWon(Board obj)
         {
+            float timeElapsed = startingTime - timer;
+            float bestTime = PlayerPrefs.GetFloat("Best time");
+            if (bestTime > timeElapsed || bestTime == 0)
+            {
+                PlayerPrefs.SetFloat("Best time", timeElapsed);
+            }
             GoToHomeScene();
         }
         private void GameLost()
