@@ -118,6 +118,7 @@ public class Board : MonoBehaviour
 
             Vector3 targetPosition = emptySpace.transform.position;
             emptySpace.transform.position = tile.lastCorrectPosition;
+            emptySpace.lastCorrectPosition = tile.lastCorrectPosition;
             tile.transform.position = targetPosition;
             tile.lastCorrectPosition = targetPosition;
         }
