@@ -6,6 +6,8 @@ using System;
 public class Tile : MonoBehaviour
 {
     public Vector2Int coordinates;
+    public Vector2Int correctCoordinates;
+
     public Vector3 lastCorrectPostion;
     public event Action<Tile> OnTileMoved;
 

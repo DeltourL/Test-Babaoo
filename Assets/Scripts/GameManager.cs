@@ -23,6 +23,16 @@ namespace TeasingGame
         void Start()
         {
             board.CreateBoard();
+            board.OnGameWon += Board_OnGameWon;
+        }
+
+        private void Board_OnGameWon(Board obj)
+        {
+            GoToHomeScene();
+        }
+        private void GameLost()
+        {
+            GoToHomeScene();
         }
 
         // Update is called once per frame
@@ -39,7 +49,7 @@ namespace TeasingGame
             else
             {
                 // end game
-                GoToHomeScene();
+                GameLost();
             }
 
         }

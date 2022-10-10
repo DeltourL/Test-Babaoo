@@ -8,6 +8,7 @@ public class Board : MonoBehaviour
 
     private readonly int boardSize = 3;
 
+    public event Action<Board> OnGameWon;
 
     [SerializeField]
     private Texture puzzleImage;
@@ -20,14 +21,12 @@ public class Board : MonoBehaviour
     private Tile emptySpace;
 
     private Tile[,] tiles;
-
-    private void Start()
-    {
-        tiles = new Tile[boardSize, boardSize];
-    }
+    private bool isShuffling;
 
     public void CreateBoard()
     {
+        tiles = new Tile[boardSize, boardSize];
+
         for (int y = 0; y < boardSize; y++)
         {
             for (int x = 0; x < boardSize; x++)
@@ -44,6 +43,7 @@ public class Board : MonoBehaviour
 
                 tile.transform.parent = transform;
                 tile.coordinates = new Vector2Int(x, y);
+                tile.correctCoordinates = tile.coordinates;
 
                 tile.OnTileMoved += MoveTile;
 
@@ -75,6 +75,7 @@ public class Board : MonoBehaviour
 
     private void Shuffle()
     {
+        isShuffling = true;
         for (int i = 0; i < shuffleMoves; i++)
         {
             List<Vector2Int> possibleMoves = new List<Vector2Int>();
@@ -107,6 +108,7 @@ public class Board : MonoBehaviour
 
             previousMove = move;
         }
+        isShuffling = false;
     }
 
     // switch places between tile and empty space 
@@ -131,5 +133,23 @@ public class Board : MonoBehaviour
         {
             tile.ResetPosition();
         }
+
+        // check if game is solved
+        if (!isShuffling && IsSolved())
+        {
+            OnGameWon?.Invoke(this);
+        }
+    }
+
+    private bool IsSolved()
+    {
+        foreach (Tile tile in tiles)
+        {
+            if (tile.coordinates != tile.correctCoordinates)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }
