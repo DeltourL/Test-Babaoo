@@ -5,16 +5,11 @@ using System;
 
 public class Tile : MonoBehaviour
 {
-    public Vector2Int coordinates;
-    public Vector2Int correctCoordinates;
+    public Vector2Int coordinates; // coordinates of the tile on the board
+    public Vector2Int correctCoordinates; // the correct position for the tile on the board
 
-    public Vector3 lastCorrectPosition;
-    public event Action<Tile> OnTileMoved;
-
-    private void Start()
-    {
-        lastCorrectPosition = transform.position;
-    }
+    public Vector3 lastCorrectPosition; // the last known position of the tile resting on the board in the world
+    public event Action<Tile> OnTileMoved; // called when user drops the tile
 
     public void Initialize(Vector2 position, Vector2Int coords, Shader shader, Texture texture, int boardSize)
     {

@@ -6,32 +6,31 @@ using UnityEngine;
 public class Board : MonoBehaviour
 {
 
-    public readonly int boardSize = 3;
+    public readonly int boardSize = 3; // represents the number of rows and columns
+    private readonly int shuffleMoves = 20; // number of moves made to shuffle the 
+    private bool isShuffling;
+    private Vector2Int previousMove = Vector2Int.zero; // saves the last move used during a shuffle loop
+    private Tile emptySpace; // the tile that acts as an empty space to move other tiles
+    private Tile[,] tiles; // array of tiles that form the board
 
-    public event Action<Board> OnGameWon;
+    public event Action<Board> OnGameWon; // called when puzzle is solved
 
     [SerializeField]
-    private Texture puzzleImage;
+    private Texture puzzleImage; // the image of the puzzle to solve
     [SerializeField]
     private Shader shader;
 
-    // number of moves made to shuffle the board
-    private int shuffleMoves = 20;
-    private Vector2Int previousMove = Vector2Int.zero;
-    private Tile emptySpace;
-
-    private Tile[,] tiles;
-    private bool isShuffling;
 
     public void CreateBoard()
     {
+        // create an array of size 3*3
         tiles = new Tile[boardSize, boardSize];
 
         for (int y = 0; y < boardSize; y++)
         {
             for (int x = 0; x < boardSize; x++)
             {
-                // first tile position in bottom left, full board is centered on 0
+                // first tile position is in bottom left, full board is centered on 0
                 Vector2 position = new Vector2((boardSize - 1) * -1 * 0.5f, (boardSize - 1) * -1 * 0.5f);
 
                 position += new Vector2(x, y);
@@ -65,6 +64,7 @@ public class Board : MonoBehaviour
         Shuffle();
     }
 
+    // make random moves to shuffle the board
     private void Shuffle()
     {
         isShuffling = true;
@@ -98,6 +98,7 @@ public class Board : MonoBehaviour
             Vector2Int chosenTileCoordinates = move + emptySpace.coordinates;
             MoveTile(tiles[chosenTileCoordinates.x, chosenTileCoordinates.y]);
 
+            // save the move to avoid back and forth
             previousMove = move;
         }
         isShuffling = false;
@@ -109,13 +110,16 @@ public class Board : MonoBehaviour
         //check if move is legal
         if ((tile.coordinates - emptySpace.coordinates).sqrMagnitude == 1)
         {
+            // switching coordinates
             Vector2Int targetCoord = emptySpace.coordinates;
             emptySpace.coordinates = tile.coordinates;
             tile.coordinates = targetCoord;
 
+            // switching tiles on the board
             tiles[emptySpace.coordinates.x, emptySpace.coordinates.y] = emptySpace;
             tiles[targetCoord.x, targetCoord.y] = tile;
 
+            // switching position in world
             Vector3 targetPosition = emptySpace.transform.position;
             emptySpace.transform.position = tile.lastCorrectPosition;
             emptySpace.lastCorrectPosition = tile.lastCorrectPosition;
@@ -124,10 +128,11 @@ public class Board : MonoBehaviour
         }
         else
         {
+            // places the tile back to where it was before being picked up
             tile.ResetPosition();
         }
 
-        // check if game is solved
+        // check if game is solved after every move if the shuffling is done
         if (!isShuffling && IsSolved())
         {
             OnGameWon?.Invoke(this);
@@ -136,6 +141,7 @@ public class Board : MonoBehaviour
 
     private bool IsSolved()
     {
+        // go through the board to find any tile in the wrong place
         foreach (Tile tile in tiles)
         {
             if (tile.coordinates != tile.correctCoordinates)
@@ -143,6 +149,8 @@ public class Board : MonoBehaviour
                 return false;
             }
         }
+
+        // if none are found, puzzle is solved;
         return true;
     }
 }
