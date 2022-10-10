@@ -7,13 +7,19 @@ public class Board : MonoBehaviour
 
     private readonly int boardSize = 3;
 
+
+    [SerializeField]
+    private Texture puzzleImage;
+    [SerializeField]
+    private Shader shader;
+
     public void CreateBoard()
     {
         for (int y = 0; y < boardSize; y++)
         {
             for (int x = 0; x < boardSize; x++)
             {
-                // first tile position in bottom left, centered on 0
+                // first tile position in bottom left, full board is centered on 0
                 Vector2 position = new Vector2((boardSize - 1) * -1 * 0.5f, (boardSize - 1) * -1 * 0.5f);
 
                 position += new Vector2(x, y);
@@ -23,7 +29,13 @@ public class Board : MonoBehaviour
                 tile.transform.position = position;
                 tile.transform.parent = transform;
 
-                tile.GetComponent<MeshRenderer>().material.color = new Color(Random.value, Random.value, Random.value);
+                // setting up the image on the tile
+                tile.GetComponent<Renderer>().material = new Material(shader)
+                {
+                    mainTexture = puzzleImage,
+                    mainTextureOffset = new Vector2(1.0f / boardSize * x, 1.0f / boardSize * y),
+                    mainTextureScale = new Vector2(1.0f / boardSize, 1.0f / boardSize)
+                };
             }
         }
     }
